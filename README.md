@@ -12,10 +12,7 @@ Author: Enrique Arroyo Moro. Citation: see CITATION.cff.
 
 This workflow consists of compact but complete route from an open-system model to a circuit-level simulation of the corresponding quantum channel (Figure 1). The central idea is:
 - Start from a Lindblad-form generator specified by the Hamiltonian $H$ and jump operators $\{L_i\}$.
-- Construct a physically valid CPTP map $\mathcal{E}_t$ and obtain a Kraus representation $\{K_j\}$ such that
-  $$
-  \mathcal{E}_t(\rho)=\sum_j K_j\,\rho\,K_j^\dagger.
-  $$
+- Construct a physically valid CPTP map $\mathcal{E}_t$ and obtain a Kraus representation $\{K_j\}$ such that $\mathcal{E}_t(\rho)=\sum_j K_j\,\rho\,K_j^\dagger$.
 - Realize $\mathcal{E}_t$ on a circuit by embedding it into a larger unitary evolution $U$ acting on system + ancilla, then perform projective measurements and estimate the observables of interest from the measurement statistics.
 
 <figure>
@@ -27,10 +24,7 @@ This workflow consists of compact but complete route from an open-system model t
 
 ### 1) From open-system model to a CPTP channel
 
-The open dynamics are specified by a Hamiltonian $H$ and jump operators $\{L_i\}$. From these, one constructs the generator of the evolution and then obtains a discrete-time quantum channel $\mathcal{E}_t$. The channel is represented through its Choi matrix $J(\mathcal{E}_t)$ [2], which guarantees complete positivity. A Kraus representation $\{K_j\}$ is then extracted so that the channel can be applied as
-$$
-\mathcal{E}_t=\sum_j K_j\,\rho\,K_j^\dagger.
-$$
+The open dynamics are specified by a Hamiltonian $H$ and jump operators $\{L_i\}$. From these, one constructs the generator of the evolution and then obtains a discrete-time quantum channel $\mathcal{E}_t$. The channel is represented through its Choi matrix $J(\mathcal{E}_t)$ [2], which guarantees complete positivity. A Kraus representation $\{K_j\}$ is then extracted so that the channel can be applied as $\mathcal{E}_t=\sum_j K_j\,\rho\,K_j^\dagger$.
 For numerical work, the Kraus operators are evaluated on a time grid (one set per time step). These time-stamped Kraus operators constitute the interface between the analytic/derivation stage and the circuit-simulation stage.
 
 ### 2) Circuit realization via unitary dilation
@@ -90,7 +84,7 @@ This public repository omits source code; please email me (enriquearroyo.contact
 
 ## Citation
 
-If you reference this material, please cite my MSc thesis:
+If you reference this material, please cite my MSc thesis (to be published):
 
 Enrique Arroyo Moro, "Quantum Computing Approaches to Quantum Thermalisation in NISQ Devices" (MSc thesis, University of Amsterdam), 2026.
 
