@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "quantum-thermalization-nisq-showcase"
+authors:
+- family-names: "Arroyo Moro"
+  given-names: "Enrique"
+license: CC BY 4.0
+url: "https://github.com/Enrique-Arroyo/quantum-thermalization-nisq-showcase"
+keywords:
+  - open quantum systems
+  - quantum thermalization
+  - lindblad master equation
+  - quantum channels
+  - cptp maps
+  - choi matrix
+  - kraus operators
+  - unitary dilation
+  - sz.-nagy dilation
+  - nisq
+  - quantum circuits
+  - quantum simulation
+  - qibo
+  - wolfram mathematica
