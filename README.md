@@ -1,6 +1,6 @@
 # Open Quantum Systems Dynamics on Quantum-Circuit Simulators (MSc Thesis Showcase)
 
-This public repository showcases the first computational module of my ongoing MSc thesis. This workflow, written in Mathematica and Python, starts from an open-quantum-system model (specified by a Hamiltonian $H$ and jump operators $\{L_i\}$), constructs the corresponding Lindblad dynamics [1], derives a discrete-time CPTP map $\mathcal{E}_t$, and implements that channel as a quantum circuit via a unitary dilation (Sz.-Nagy theorem). Results from the circuit-based dynamics are compared against analytic and/or numerical calculations for representative systems: one and two qubits in thermal baths.
+This public repository showcases the first computational module of my ongoing MSc thesis. This workflow, written in Mathematica and Python, starts from an open-quantum-system model (specified by a Hamiltonian $H$ and jump operators $\{L_i\}$), constructs the corresponding Lindblad dynamics [1], derives a discrete-time CPTP map $\mathcal{E}_t$, and implements that channel as a quantum circuit via a unitary dilation (Sz.-Nagy theorem). Results from the circuit-based dynamics are compared against analytic and/or numerical calculations for representative benchmarks, including the amplitude damping (AD) channel and a 1-qubit thermal-bath model (generalized amplitude damping, GAD), with results obtained both in simulation and on quantum hardware via Quantum Inspire (QX emulator and Tuna-5). This framework also provides the basis for thermodynamic applications such as a qubit-based quantum Otto cycle heat engine.
 
 This repository intentionally omits source code and contains only the conceptual workflow and some representative outputs. **The full implementation is available upon request.**
 
@@ -37,40 +37,57 @@ After running the circuit on system + ancilla, observables are estimated from th
 
 Validation is performed by comparing observables extracted from the circuit measurements with independent reference predictions computed directly from the model (analytic where available, otherwise numerical). Agreement in population dynamics across time steps is used as the primary quantitative check. Bloch-trajectory plots provide an additional qualitative diagnostic for one-qubit channels.
 
+### 4) Execution on quantum hardware
+
+To assess NISQ feasibility beyond ideal simulation, selected channels are executed on quantum hardware via Quantum Inspire (Tuna-5 and Tuna-9 processors, with 5 and 9 superconducting qubits). For each time point on the grid, the corresponding system + ancilla circuit (compiled from the time-stamped Kraus operators) is transpiled to the target backend, submitted in batches, and measured with a fixed number of shots. Hardware observables (e.g., state populations) are extracted from the returned bitstring counts using the same post-processing workflow as in simulation, enabling a direct comparison between emulator and hardware results. These runs provide an empirical characterization of deviations due to device noise and transpilation-induced depth, and they serve as the first step toward implementing more structured thermodynamic protocols (e.g., a qubit Otto cycle) on real hardware.
+
 ---
 
 ## Sample results
 
 ### 1) One-qubit validation: populations (circuit vs analytic)
 
-In Figure 2, the measured one-qubit state populations obtained from the circuit implementation of $\mathcal{E}_t$ (markers) closely follow the analytic/reference solution (solid lines). This indicates that the extracted Kraus operators and the corresponding unitary-dilation circuit reproduce the intended open-system population dynamics.
+In Figure 2, the measured one-qubit state populations obtained from the circuit implementation of $\mathcal{E}_t$ (markers) closely follow the analytic prediction for the same generalized amplitude damping (GAD) dynamics (solid lines). This indicates that the extracted Kraus operators and the corresponding unitary-dilation circuit reproduce the intended open-system population dynamics.
 
 <figure>
-  <img src="figures/one-qubis_populations-circuits-vs-analytic.png" width="600">
+  <img src="figures/one-qubit_populations-circuits-vs-analytic.png" width="600">
   <figcaption>
-    <b>Figure 2.</b> One-qubit populations vs time: circuit simulation (markers) compared to analytic reference (lines).
+    <b>Figure 2.</b> One-qubit populations vs time for the GAD channel: circuit simulation (markers) compared to analytic reference (lines).
   </figcaption>
 </figure>
 
-### 2) One-qubit dynamics: Bloch-vector trajectory projections
+### 2) One-qubit validation on hardware: populations (Tuna-5 vs analytic)
 
-In Figure 3, the reduced one-qubit dynamics are visualized through projections of the Bloch vector $\langle \boldsymbol{\sigma} \rangle = (\langle \sigma_x \rangle, \langle \sigma_y \rangle, \langle \sigma_z \rangle)$ onto the coordinate planes, with explicit start and end markers. The trajectory highlights how coherence ($\langle \sigma_x \rangle, \langle \sigma_y \rangle$) and population imbalance ($\langle \sigma_z \rangle$) evolve under the implemented dissipative channel, providing a geometric diagnostic complementary to the population plots.
+In Figure 3, the one-qubit state populations extracted from projective measurements of the circuit executed on quantum hardware (markers) are compared to the analytic prediction (solid lines). The hardware data reproduce the expected relaxation trend toward the thermal steady state, while exhibiting increased scatter and small systematic deviations relative to ideal simulation. These discrepancies are consistent with NISQ limitations, including finite-shot statistics, gate and readout noise, and depth overhead introduced by transpilation of the system + ancilla dilation circuit.
+
+**Figure 3.** 
+
+<figure>
+  <img src="figures/one-qubit_populations-hardware.png" width="600">
+  <figcaption>
+    <b>Figure 3.</b> One-qubit populations vs time: Tuna-5 hardware results (markers) compared to the analytic/reference prediction (solid lines).
+  </figcaption>
+</figure>
+
+### 3) One-qubit dynamics: Bloch-vector trajectory projections
+
+In Figure 4, the reduced one-qubit dynamics are visualized through projections of the Bloch vector $\langle \boldsymbol{\sigma} \rangle = (\langle \sigma_x \rangle, \langle \sigma_y \rangle, \langle \sigma_z \rangle)$ onto the coordinate planes, with explicit start and end markers. The trajectory highlights how coherence ($\langle \sigma_x \rangle, \langle \sigma_y \rangle$) and population imbalance ($\langle \sigma_z \rangle$) evolve under the implemented dissipative channel, providing a geometric diagnostic complementary to the population plots.
 
 <figure>
   <img src="figures/one-qubit_bloch-trajectory.png" width="600">
   <figcaption>
-    <b>Figure 3.</b> One-qubit Bloch-vector trajectory projections, with start/end markers.
+    <b>Figure 4.</b> One-qubit Bloch-vector trajectory projections, with start/end markers.
   </figcaption>
 </figure>
 
-### 3) Two-qubit validation: populations (circuit vs analytic)
+### 4) Two-qubit validation: populations (circuit vs analytic)
 
-In Figure 4, the circuit implementation of the two-qubit channel reproduces the time-dependent populations of the computational-basis states $\{|00\rangle, |01\rangle, |10\rangle, |11\rangle\}$. The circuit estimates (markers), obtained from projective measurement statistics, track the analytic/classical reference curves (solid lines). This agreement indicates that the Kraus extraction and unitary-dilation construction scale beyond the single-qubit case and correctly capture the intended two-qubit open-system population dynamics.
+In Figure 5, the circuit implementation of the two-qubit channel reproduces the time-dependent populations of the computational-basis states $\{|00\rangle, |01\rangle, |10\rangle, |11\rangle\}$. The circuit estimates (markers), obtained from projective measurement statistics, track the analytic/classical reference curves (solid lines). This agreement indicates that the Kraus extraction and unitary-dilation construction scale beyond the single-qubit case and correctly capture the intended two-qubit open-system population dynamics.
 
 <figure>
   <img src="figures/two-qubits_populations-circuits-vs-analytic.png" width="600">
   <figcaption>
-    <b>Figure 4.</b> Two-qubit computational-basis populations vs time: circuit simulation (markers) compared to analytic / classical reference (lines).
+    <b>Figure 5.</b> Two-qubit computational-basis populations vs time: circuit simulation (markers) compared to analytic / classical reference (lines).
   </figcaption>
 </figure>
 
