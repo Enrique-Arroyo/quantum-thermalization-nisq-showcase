@@ -1,6 +1,6 @@
 # Open Quantum Systems Dynamics on Quantum-Circuit Simulators (MSc Thesis Showcase)
 
-This public repository showcases the first computational module of my ongoing MSc thesis. This workflow, written in Mathematica and Python, starts from an open-quantum-system model (specified by a Hamiltonian $H$ and jump operators $\{L_i\}$), constructs the corresponding Lindblad dynamics [1], derives a discrete-time CPTP map $\mathcal{E}_t$, and implements that channel as a quantum circuit via a unitary dilation (Sz.-Nagy theorem). Results from the circuit-based dynamics are compared against analytic and/or numerical calculations for representative benchmarks, including the amplitude damping (AD) channel and a 1-qubit thermal-bath model (generalized amplitude damping, GAD), with results obtained both in simulation and on quantum hardware via Quantum Inspire (QX emulator and Tuna-5). This framework also provides the basis for thermodynamic applications such as a qubit-based quantum Otto cycle heat engine.
+This public repository showcases the first computational module of my ongoing MSc thesis. This workflow, written in Mathematica and Python, starts from an open-quantum-system model (specified by a Hamiltonian $H$ and jump operators $\{L_i\}$), constructs the corresponding Lindblad dynamics [1], derives a discrete-time CPTP map $\mathcal{E}_t$, and implements that channel as a quantum circuit via a unitary dilation (Sz.-Nagy theorem). Results from the circuit-based dynamics are compared against analytic and/or numerical calculations for representative benchmarks, including the amplitude damping (AD) channel and a 1-qubit thermal-bath model (generalized amplitude damping, GAD), with results obtained both in simulation and on quantum hardware via Quantum Inspire. This framework also provides the basis for thermodynamic applications such as a qubit-based quantum Otto cycle heat engine.
 
 This repository intentionally omits source code and contains only the conceptual workflow and some representative outputs. **The full implementation is available upon request.**
 
@@ -60,12 +60,10 @@ In Figure 2, the measured one-qubit state populations obtained from the circuit 
 
 In Figure 3, the one-qubit state populations extracted from projective measurements of the circuit executed on quantum hardware (markers) are compared to the analytic prediction (solid lines). The hardware data reproduce the expected relaxation trend toward the thermal steady state, while exhibiting increased scatter and small systematic deviations relative to ideal simulation. These discrepancies are consistent with NISQ limitations, including finite-shot statistics, gate and readout noise, and depth overhead introduced by transpilation of the system + ancilla dilation circuit.
 
-**Figure 3.** 
-
 <figure>
   <img src="figures/one-qubit_populations-hardware.png" width="600">
   <figcaption>
-    <b>Figure 3.</b> One-qubit populations vs time: Tuna-5 hardware results (markers) compared to the analytic/reference prediction (solid lines).
+    <b>Figure 3.</b> One-qubit populations vs time: Tuna-5 hardware results (markers) compared to the analytic prediction (solid lines).
   </figcaption>
 </figure>
 
@@ -87,7 +85,7 @@ In Figure 5, the circuit implementation of the two-qubit channel reproduces the 
 <figure>
   <img src="figures/two-qubits_populations-circuits-vs-analytic.png" width="600">
   <figcaption>
-    <b>Figure 5.</b> Two-qubit computational-basis populations vs time: circuit simulation (markers) compared to analytic / classical reference (lines).
+    <b>Figure 5.</b> Two-qubit computational-basis populations vs time: circuit simulation (markers) compared to analytic reference (lines).
   </figcaption>
 </figure>
 
