@@ -1,116 +1,96 @@
-# Open Quantum Systems Dynamics on Quantum-Circuit Simulators (MSc Thesis Showcase)
+# Quantum Computing Approaches to Quantum Thermalization in NISQ Devices: Showcase
 
-This public repository showcases the first computational module of my ongoing MSc thesis. This workflow, written in Mathematica and Python, starts from an open-quantum-system model (specified by a Hamiltonian $H$ and jump operators $\{L_i\}$), constructs the corresponding Lindblad dynamics [1], derives a discrete-time CPTP map $\mathcal{E}_t$, and implements that channel as a quantum circuit via a unitary dilation (Sz.-Nagy theorem). Results from the circuit-based dynamics are compared against analytic and/or numerical calculations for representative benchmarks, including the amplitude damping (AD) channel and a 1-qubit thermal-bath model (generalized amplitude damping, GAD), with results obtained both in simulation and on quantum hardware via Quantum Inspire. This framework also provides the basis for thermodynamic applications such as a qubit-based quantum Otto cycle heat engine.
+This repository is a compact showcase for the MSc thesis *Quantum Computing Approaches to Quantum Thermalization in NISQ Devices*.
 
-This repository intentionally omits source code and contains only the conceptual workflow and some representative outputs. **The full implementation is available upon request.**
-
-Author: Enrique Arroyo Moro. Citation: see CITATION.cff.
-
----
+The current companion code is already available here: [Full companion code](https://github.com/Enrique-Arroyo/quantum-thermalization-nisq)
 
 ## Overview
 
-This workflow consists of compact but complete route from an open-system model to a circuit-level simulation of the corresponding quantum channel (Figure 1). The central idea is:
-- Start from a Lindblad-form generator specified by the Hamiltonian $H$ and jump operators $\{L_i\}$.
-- Construct a physically valid CPTP map $\mathcal{E}_t$ and obtain a Kraus representation $\{K_j\}$ such that $\mathcal{E}_t(\rho)=\sum_j K_j\,\rho\,K_j^\dagger$.
-- Realize $\mathcal{E}_t$ on a circuit by embedding it into a larger unitary evolution $U$ acting on system + ancilla, then perform projective measurements and estimate the observables of interest from the measurement statistics.
+This showcase summarizes the workflow used for small open quantum systems. The overall route is shown in [Figure 1](#fig-workflow). The physical input is a finite-dimensional open-system model specified by a Hamiltonian $H$, Lindblad jump operators $\{L_k\}$, dissipative rates $\{\Gamma_k\}$, a bath model, an initial state, and a time grid. For each time $t_i$, the Liouvillian $\mathcal{L}$ defines a completely positive trace-preserving (CPTP) channel $\Phi_{t_i}=e^{t_i\mathcal{L}}$ [1].
 
-<figure>
-  <img src="figures/pipeline-diagram.png" width="600">
-  <figcaption>
-    <b>Figure 1.</b> End-to-end workflow: Kraus-operator derivation and circuit-based channel simulation via unitary dilation.
-  </figcaption>
-</figure>
+The channel is represented through its Choi matrix $J_{t_i}$, from which a Kraus representation $\{K_\alpha(t_i)\}_{\alpha=1}^{\kappa}$ is extracted [2]:
 
-### 1) From open-system model to a CPTP channel
+$$
+\Phi_{t_i}(\rho)=\sum_{\alpha=1}^{\kappa} K_\alpha(t_i)\rho K_\alpha^\dagger(t_i).
+$$
 
-The open dynamics are specified by a Hamiltonian $H$ and jump operators $\{L_i\}$. From these, one constructs the generator of the evolution and then obtains a discrete-time quantum channel $\mathcal{E}_t$. The channel is represented through its Choi matrix $J(\mathcal{E}_t)$ [2], which guarantees complete positivity. A Kraus representation $\{K_j\}$ is then extracted so that the channel can be applied as $\mathcal{E}_t=\sum_j K_j\,\rho\,K_j^\dagger$.
-For numerical work, the Kraus operators are evaluated on a time grid (one set per time step). These time-stamped Kraus operators constitute the interface between the analytic/derivation stage and the circuit-simulation stage.
+The time-stamped Kraus operators are the interface between the open-system model and the circuit realization. Each branch $(t_i,\alpha)$ is embedded into a larger unitary $U_{K_\alpha(t_i)}$ acting on system plus ancilla using a Sz.-Nagy dilation construction, yielding circuits whose measurement statistics reconstruct observables [3]. Validation compares these reconstructed observables with direct numerical or analytic reference predictions.
 
-### 2) Circuit realization via unitary dilation
+<a id="fig-workflow"></a>
 
-A general CPTP map can be implemented by coupling the system to an ancilla, applying a joint unitary $U$, and performing projection measurements [3]. Here, $U$ is constructed from the Kraus operators using a Sz.-Nagy dilation procedure. The resulting unitary is compiled into a quantum circuit and simulated.
+<p align="center">
+  <img src="figures/workflow_overview.png" width="850" alt="Workflow overview">
+</p>
 
-After running the circuit on system + ancilla, observables are estimated from the statistics of the projective measurements. Typical observables include state populations in a chosen computational basis and Bloch-vector components for one-qubit cases, $\langle \sigma_\alpha \rangle$ with $\alpha\in\{x,y,z\}$.
+<p align="center">
+  <b>Figure 1.</b> Workflow from open-system model to channel construction, dilation circuits, and observable reconstruction.
+</p>
 
-### 3) Validation strategy
+<br>
 
-Validation is performed by comparing observables extracted from the circuit measurements with independent reference predictions computed directly from the model (analytic where available, otherwise numerical). Agreement in population dynamics across time steps is used as the primary quantitative check. Bloch-trajectory plots provide an additional qualitative diagnostic for one-qubit channels.
+## What is shown
 
-### 4) Execution on quantum hardware
+- amplitude-damping channel;
+- one-qubit finite-temperature thermalization;
+- one-qubit thermal-plus-dephasing thermalization;
+- two-qubit local thermal-bath simulation;
+- one-qubit Otto-cycle channel-composition study;
+- selected IBM and fake-backend results.
 
-To assess NISQ feasibility beyond ideal simulation, selected channels are executed on quantum hardware via Quantum Inspire (Tuna-5 and Tuna-9 processors, with 5 and 9 superconducting qubits). For each time point on the grid, the corresponding system + ancilla circuit (compiled from the time-stamped Kraus operators) is transpiled to the target backend, submitted in batches, and measured with a fixed number of shots. Hardware observables (e.g., state populations) are extracted from the returned bitstring counts using the same post-processing workflow as in simulation, enabling a direct comparison between emulator and hardware results. These runs provide an empirical characterization of deviations due to device noise and transpilation-induced depth, and they serve as the first step toward implementing more structured thermodynamic protocols (e.g., a qubit Otto cycle) on real hardware.
+## Representative results
 
----
+<a id="fig-one-qubit-thermalization"></a>
 
-## Sample results
+<p align="center">
+  <img src="figures/one_qubit_thermalization.svg" width="850" alt="One-qubit finite-temperature thermalization">
+</p>
 
-### 1) One-qubit validation: populations (circuit vs analytic)
+<p align="center">
+  <b>Figure 2.</b> One-qubit finite-temperature thermalization.
+</p>
 
-In Figure 2, the measured one-qubit state populations obtained from the circuit implementation of $\mathcal{E}_t$ (markers) closely follow the analytic prediction for the same generalized amplitude damping (GAD) dynamics (solid lines). This indicates that the extracted Kraus operators and the corresponding unitary-dilation circuit reproduce the intended open-system population dynamics.
+<br>
 
-<figure>
-  <img src="figures/one-qubit_populations-circuits-vs-analytic.png" width="600">
-  <figcaption>
-    <b>Figure 2.</b> One-qubit populations vs time for the GAD channel: circuit simulation (markers) compared to analytic reference (lines).
-  </figcaption>
-</figure>
+<a id="fig-ibm-hardware-comparison"></a>
 
-### 2) One-qubit validation on hardware: populations (Tuna-5 vs analytic)
+<p align="center">
+  <img src="figures/ibm_hardware_comparison.svg" width="850" alt="IBM hardware comparison for the one-qubit thermal channel">
+</p>
 
-In Figure 3, the one-qubit state populations extracted from projective measurements of the circuit executed on quantum hardware (markers) are compared to the analytic prediction (solid lines). The hardware data reproduce the expected relaxation trend toward the thermal steady state, while exhibiting increased scatter and small systematic deviations relative to ideal simulation. These discrepancies are consistent with NISQ limitations, including finite-shot statistics, gate and readout noise, and depth overhead introduced by transpilation of the system + ancilla dilation circuit.
+<p align="center">
+  <b>Figure 3.</b> IBM hardware comparison for the one-qubit thermal channel.
+</p>
 
-<figure>
-  <img src="figures/one-qubit_populations-hardware.png" width="600">
-  <figcaption>
-    <b>Figure 3.</b> One-qubit populations vs time: Tuna-5 hardware results (markers) compared to the analytic prediction (solid lines).
-  </figcaption>
-</figure>
+<br>
 
-### 3) One-qubit dynamics: Bloch-vector trajectory projections
+<a id="fig-otto-cycle-convergence"></a>
 
-In Figure 4, the reduced one-qubit dynamics are visualized through projections of the Bloch vector $\langle \boldsymbol{\sigma} \rangle = (\langle \sigma_x \rangle, \langle \sigma_y \rangle, \langle \sigma_z \rangle)$ onto the coordinate planes, with explicit start and end markers. The trajectory highlights how coherence ($\langle \sigma_x \rangle, \langle \sigma_y \rangle$) and population imbalance ($\langle \sigma_z \rangle$) evolve under the implemented dissipative channel, providing a geometric diagnostic complementary to the population plots.
+<p align="center">
+  <img src="figures/otto_cycle_convergence.svg" width="850" alt="Single-qubit Otto-cycle convergence">
+</p>
 
-<figure>
-  <img src="figures/one-qubit_bloch-trajectory.png" width="600">
-  <figcaption>
-    <b>Figure 4.</b> One-qubit Bloch-vector trajectory projections, with start/end markers.
-  </figcaption>
-</figure>
+<p align="center">
+  <b>Figure 4.</b> Single-qubit Otto-cycle convergence.
+</p>
 
-### 4) Two-qubit validation: populations (circuit vs analytic)
-
-In Figure 5, the circuit implementation of the two-qubit channel reproduces the time-dependent populations of the computational-basis states $\{|00\rangle, |01\rangle, |10\rangle, |11\rangle\}$. The circuit estimates (markers), obtained from projective measurement statistics, track the analytic/classical reference curves (solid lines). This agreement indicates that the Kraus extraction and unitary-dilation construction scale beyond the single-qubit case and correctly capture the intended two-qubit open-system population dynamics.
-
-<figure>
-  <img src="figures/two-qubits_populations-circuits-vs-analytic.png" width="600">
-  <figcaption>
-    <b>Figure 5.</b> Two-qubit computational-basis populations vs time: circuit simulation (markers) compared to analytic reference (lines).
-  </figcaption>
-</figure>
-
----
-
-## Access to full code
-
-This public repository omits source code; please email me (enriquearroyo.contact@gmail.com) if you are interested in the full implementation (Kraus derivations/exports, unitary dilation, circuit simulation scripts, and reproducibility instructions).
-
----
+<br>
 
 ## Citation
 
-If you reference this material, please cite my MSc thesis (to be published):
+Citation metadata is provided in `CITATION.cff`.
 
-Enrique Arroyo Moro, "Quantum Computing Approaches to Quantum Thermalisation in NISQ Devices" (MSc thesis, University of Amsterdam), 2026.
+If you use this material, please cite the repository release and/or the associated MSc thesis:
 
----
+Enrique Arroyo Moro, *Quantum Computing Approaches to Quantum Thermalization in NISQ Devices*, MSc thesis, University of Amsterdam, 2026.
 
 ## References
 
-[1] D. Manzano, "A short introduction to the Lindblad master equation," AIP Advances 10, 025106 (2020). DOI: 10.1063/1.5115323. https://doi.org/10.1063/1.5115323
+[1] D. Manzano, "A short introduction to the Lindblad master equation," *AIP Advances* 10, 025106 (2020). DOI: 10.1063/1.5115323. https://doi.org/10.1063/1.5115323
 
 [2] E. Andersson, J. D. Cresser, and M. J. W. Hall, "Finding the Kraus decomposition from a master equation and vice versa," arXiv:0801.4100 [quant-ph] (2008). https://arxiv.org/abs/0801.4100
 
-[3] Z. Hu, R. Xia, and S. Kais, "A quantum algorithm for evolving open quantum dynamics on quantum computing devices," Scientific Reports 10, 3301 (2020). DOI: 10.1038/s41598-020-60321-x. https://doi.org/10.1038/s41598-020-60321-x
+[3] Z. Hu, R. Xia, and S. Kais, "A quantum algorithm for evolving open quantum dynamics on quantum computing devices," *Scientific Reports* 10, 3301 (2020). DOI: 10.1038/s41598-020-60321-x. https://doi.org/10.1038/s41598-020-60321-x
 
----
+## License
+
+See `LICENSE` for reuse terms.

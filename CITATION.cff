@@ -1,23 +1,25 @@
 cff-version: 1.2.0
-message: "If you use this repository, please cite it as below."
-title: "quantum-thermalization-nisq-showcase"
+message: "If you use this repository, please cite it using the metadata below."
+title: "Quantum Computing Approaches to Quantum Thermalization in NISQ Devices: Companion Code"
+type: software
 authors:
-- family-names: "Arroyo Moro"
-  given-names: "Enrique"
-license: CC BY 4.0
-url: "https://github.com/Enrique-Arroyo/quantum-thermalization-nisq-showcase"
+  - family-names: "Arroyo Moro"
+    given-names: "Enrique"
+version: "0.1.0"
+license: "MIT"
+abstract: >-
+  Companion research code for the MSc thesis "Quantum Computing Approaches to
+  Quantum Thermalization in NISQ Devices". The repository implements a
+  small-system workflow for Markovian open quantum dynamics: construction of
+  finite-time Lindblad channels, Choi/Kraus extraction, branch-resolved
+  Sz.-Nagy dilation circuits, and reconstruction of observables from simulator,
+  fake-backend, and saved IBM Quantum results.
 keywords:
-  - open quantum systems
-  - quantum thermalization
-  - lindblad master equation
-  - quantum channels
-  - cptp maps
-  - choi matrix
-  - kraus operators
-  - unitary dilation
-  - sz.-nagy dilation
-  - nisq
-  - quantum circuits
-  - quantum simulation
-  - qibo
-  - wolfram mathematica
+  - "open quantum systems"
+  - "quantum thermalization"
+  - "Lindblad dynamics"
+  - "quantum channels"
+  - "Kraus representation"
+  - "Sz.-Nagy dilation"
+  - "NISQ"
+  - "Qiskit"

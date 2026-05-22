@@ -1,0 +1,12 @@
+# Normalize text files to LF in the repository.
+* text=auto eol=lf
+
+# Common binary/data formats.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.npy binary
+*.npz binary
+*.pkl binary
+*.pickle binary
