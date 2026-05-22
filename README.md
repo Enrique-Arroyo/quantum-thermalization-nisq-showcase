@@ -2,7 +2,7 @@
 
 This repository is a compact showcase for the MSc thesis *Quantum Computing Approaches to Quantum Thermalization in NISQ Devices*.
 
-The current companion code is already available here: [Full companion code](https://github.com/Enrique-Arroyo/quantum-thermalization-nisq)
+The companion code is already available here: [Full companion code](https://github.com/Enrique-Arroyo/quantum-thermalization-nisq)
 
 ## Overview
 
